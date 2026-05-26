@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-app
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-hello
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-hello
+    spec:
+      containers:
+      - name: nginx
+        image: {{ .Values.image }}
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        configMap:
+          name: {{ .Release.Name }}-config

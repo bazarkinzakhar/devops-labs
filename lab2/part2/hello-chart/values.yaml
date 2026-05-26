@@ -1,0 +1,3 @@
+replicaCount: 2
+image: nginx:alpine
+text: "hello devops k8s!!!"
