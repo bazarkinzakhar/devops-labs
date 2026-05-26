@@ -12,3 +12,25 @@
 5. Графики работы системы
 <img width="1512" height="816" alt="image" src="https://github.com/user-attachments/assets/04595dfc-04fc-4150-be75-e1392d419ce1" />
 <img width="1512" height="747" alt="image" src="https://github.com/user-attachments/assets/cc4d9df3-6992-47a1-93e2-e1504b406fcb" />
+
+## Описание кода
+### лабораторная работа 5: мониторинг сервиса в kubernetes
+
+порядок выполнения шагов::
+
+```bash
+# добавление репозиторя с мониторингом и обновление списка
+helm repo add prometheus-community [https://prometheus-community.github.io/helm-charts](https://prometheus-community.github.io/helm-charts)
+helm repo update
+
+# установка prometheus и grafana в отдельный неймспейс
+helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+
+# проверка, что все поды мониторинга запустились
+kubectl get pods -n monitoring
+
+# пароль администратора для входа в grafana
+kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+# проброска портов для доступа к веб интерфейсу grafana
+kubectl port-forward svc/prometheus-grafana 8080:80 -n monitoring
