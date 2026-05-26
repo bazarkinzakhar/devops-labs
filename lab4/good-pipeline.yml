@@ -1,0 +1,45 @@
+name: good-pipeline
+
+on:
+  push:
+    branches:
+      - main
+    # игнорирование текстовых файлов экономит ресурсы при сборке
+    paths-ignore:
+      - '**.txt'
+      - '**.md'
+
+# ограничение прав токена минимизирует ущерб при взломе
+permissions:
+  contents: read
+
+jobs:
+  ci-cd-process:
+    # явное указание версии ос гарантирует стабильность окружения
+    runs-on: ubuntu-22.04
+    steps:
+      # 1 этап: безопасное получение кода актуальной версией экшена
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      # 2 этап: проверка синтаксиса скрипта встроенным линтером
+      - name: lint code
+        run: shellcheck script.sh
+
+      # 3 этап: запуск скрипта для проверки работоспособности
+      - name: run tests
+        run: |
+          chmod +x script.sh
+          ./script.sh
+
+      # 4 этап: сборка образа с явным тегом
+      - name: build image
+        run: docker build -t ${{ secrets.DOCKER_USER }}/good-app:${{ github.sha }} .
+
+      # 5 этап: безопасная авторизация и отправка образа в реестр
+      - name: push image
+        if: github.event_name == 'push'
+        run: |
+          # секреты безопасно передаются напрямую в параметры без вывода в консоль
+          echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+          docker push ${{ secrets.DOCKER_USER }}/good-app:${{ github.sha }}
