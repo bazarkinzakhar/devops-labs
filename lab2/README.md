@@ -1,7 +1,7 @@
 # лабораторная 2
 
 ## часть 1
-сначада я поднял локальный кластер командой minikube start, затем создал единый манифест manifest.yaml, в котором описано сразу 3 ресурса: configmap (хранит html страницу), deployment (управляет подом с nginx) и service (отвечает за сетевой доступ). развернул все одной командой kubectl apply -f manifest.yaml. дождался запуска пода через kubectl rollout status и проверил работоспособность через minikube service hello-service
+сначала я поднял локальный кластер командой minikube start, затем создал единый манифест manifest.yaml, в котором описано сразу 3 ресурса: configmap (хранит html страницу), deployment (управляет подом с nginx) и service (отвечает за сетевой доступ). развернул все одной командой kubectl apply -f manifest.yaml. дождался запуска пода через kubectl rollout status и проверил работоспособность через minikube service hello-service
 
 ## часть 2
 на основе ресурсов из первой части был создан helm-чарт hello-chart. в папку templates перенесены манифесты configmap, deployment и service, а параметры (количество реплик, образ и текст страницы) вынесены в файл values.yaml
